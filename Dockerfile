@@ -6,10 +6,10 @@ FROM golang:alpine as builder
 
 # Install MailHog:
 RUN apk --no-cache add --virtual build-dependencies \
-    git \
+  git \
   && mkdir -p /root/gocode \
   && export GOPATH=/root/gocode \
-  && go get github.com/mailhog/MailHog
+  && go get github.com/martinezleoml/MailHog
 
 FROM alpine:3
 # Add mailhog user/group with uid/gid 1000.

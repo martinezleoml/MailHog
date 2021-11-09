@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/smtp"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -332,7 +333,12 @@ func (apiv1 *APIv1) release_one(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	err = smtp.SendMail(cfg.Host+":"+cfg.Port, auth, "nobody@"+apiv1.config.Hostname, []string{cfg.Email}, bytes)
+	fromAddr := "nobody@" + apiv1.config.Hostname
+	if len(os.Getenv("MH_SENDMAIL_FROM")) > 0 {
+		fromAddr = os.Getenv("MH_SENDMAIL_FROM")
+	}
+
+	err = smtp.SendMail(cfg.Host+":"+cfg.Port, auth, fromAddr, []string{cfg.Email}, bytes)
 	if err != nil {
 		log.Printf("Failed to release message: %s", err)
 		w.WriteHeader(500)
